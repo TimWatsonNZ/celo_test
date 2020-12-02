@@ -1,0 +1,12 @@
+[
+  {
+    "firstName": "Tim",
+    "email": "tim.watson.nz@gmail.com",
+    "lastName": "Watson",
+    "title": "Mr",
+    "phoneNumber": "022 234 5678",
+    "dateOfBirth": "1986-06-19",
+    "thumbnailUrl": "thumb/nail.png",
+    "imageUrl": "image.png"
+  }
+]
