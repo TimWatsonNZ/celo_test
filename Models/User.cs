@@ -2,7 +2,7 @@ using System;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace celo_test
+namespace celo_test.Models
 {
     public class User
     {

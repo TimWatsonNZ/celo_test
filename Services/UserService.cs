@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using celo_test.Filters;
+using celo_test.Models;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace celo_test.Services {
   public class UserService {
@@ -16,20 +19,21 @@ namespace celo_test.Services {
     }
 
     public List<User> Get(UserFilter filter) {
-      var findFilter = Builders<User>.Filter.Where(user => true);
+      var query = _users.AsQueryable();
 
-      if (string.IsNullOrEmpty(filter.FirstName)) {
-        findFilter = findFilter & Builders<User>.Filter.Eq("firstName", filter.FirstName);
+      if (!string.IsNullOrEmpty(filter.FirstName)) {
+        query = query.Where(user => user.firstName.ToLower() == filter.FirstName.ToLower());
       }
 
-      if (string.IsNullOrEmpty(filter.LastName)) {
-        findFilter = findFilter & Builders<User>.Filter.Eq("lastName", filter.LastName);
+      if (!string.IsNullOrEmpty(filter.LastName)) {
+        query = query.Where(user => user.lastName.ToLower() == filter.LastName.ToLower());
       }
 
-      var limit = filter.Limit > 0 ? filter.Limit : null;
-      var users = _users.Find(findFilter, null).Limit(limit).ToList();
+      if (filter.Limit.HasValue) {
+        query = query.Take(filter.Limit.Value);
+      }
 
-      return users;
+      return query.ToList();
     }
 
     public User Insert(User user) {
@@ -56,7 +60,16 @@ namespace celo_test.Services {
       
       var result = await _users.UpdateOneAsync(filter, update);
 
-      return user;
+      if (result.ModifiedCount > 0) {
+        return user;
+      }
+      return null;
+    }
+
+    public bool Delete(string id) {
+      var result = _users.DeleteOne(user => user.id == id);
+      
+      return result.DeletedCount > 0;
     }
     
   }
