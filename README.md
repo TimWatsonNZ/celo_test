@@ -1,1 +1,3 @@
-# celo_test
+# Test for Celo
+
+To start database run docker-compose up.
